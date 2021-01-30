@@ -13,15 +13,12 @@ program.db = db;
 program.debug = debug;
 program.world = world;
 
-program.me_inv = require("inventory_controller")
-program.te_rep = require("ic2_replicator")
+program.me_inv = component.inventory_controller
+program.te_rep = component.ic2_replicator
 
 local main = require("main")
 program.main = main;
-
-local rep = require("replicator")
-program.rep = rep;
-
+print("pre main test", main.conf.side)
 main.Main();
 
 return program;

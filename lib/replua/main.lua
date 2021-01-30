@@ -6,12 +6,11 @@ local repBlockNames = {}
 local repnames = {}
 local proxyNames = nil
 local sidesapi = require("sides");
-local invside = -1;
 
 repnames.ic2rep = "ic2:replicator";
 repnames.ic2pat = "ic2:pattern_storage";
 
-main = {}
+local main = {}
 
 main.isSafe = false;
 main.init = false;
@@ -21,6 +20,7 @@ main.conf.repPos = nil
 main.conf.scanPos = nil
 main.conf.patPos = nil
 main.conf.UUInv = nil
+main.conf.side = -1
 
 -- program.iostate: 0 listen,2 read,3 queue, 0 listen...
 
@@ -29,15 +29,19 @@ main.queue = {}
 main.isCounting = false
 
 function main.Main()
-    invside = program.tsave.load("config")
+    print("Test", main.conf.side)
+    local main.conf.side = program.tsave.load("side.cfg")
+
     -- Foreach side check if there is a valid inventory
-    if invside == -1 then
+    if main.conf.side == -1 then
         for i in ipairs(sidesapi) do
-            if meinv.getInventorySize(invside) ~= nil
-                invside = i;
+            if meinv.getInventorySize(i - 1) ~= nil then
+                main.conf.side = i - 1;
                 break;
+            end
         end
     end
+    print("Side loaded", main.conf.side)
     print("")
     print("Welcome to the Replicator Interface ;)\n")
 
@@ -61,19 +65,18 @@ function main.Setup()
     proxyNames = program.tsave.load("proxy")
     main.Enqueue()
     main.Process()
-
 end
 
 function main.Enqueue()
     -- get the front side of the inventory
-    local size = meinv.getInventorySize(invside)
+    local size = meinv.getInventorySize(main.conf.side)
 
-    for i, size do
+    for i,k in size do
         if has_value(main.process_slots, i-1) == false then
             local stack = meinv.getStackInInternalSlot(i - 1)
             if stack.name == "minecraft:paper" and stack.label ~= "Paper" then
                 local done = false;
-                for index, value in pairs(proxyNames) do
+                for index, value in pairs(proxyNames)
                     if index == stack.label then
                         main.queue[value].count = main.queue[value].count + stack.size;
                         table.insert(main.queue[value].slots, i - 1)
@@ -95,13 +98,14 @@ function main.Enqueue()
 end
 
 function main.Process()
-    for i,k in pairs(queue) do
+    for i,k in pairs(queue)
         print(i .. ":".. tostring(queue.s))
         rep.setPatternNamed(k);
         local prev = 1
-        for i, queue[i].count, 1 then
+        for i,k in queue[i].count, 1 do
             prev = rep.setMode(1)
             while rep.getMode() == prev do
+                local i = 0
             end
         end
     end
@@ -133,4 +137,6 @@ local function tablelength(T)
     end
     return count
 end
+
+print("Test", main.conf.side)
 return main;
