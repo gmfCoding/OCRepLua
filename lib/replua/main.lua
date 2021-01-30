@@ -73,17 +73,25 @@ function main.Setup()
     main.Process()
 end
 
+function main.TestQueue(value, amt, slots)
+    if main.queue[value] == nil then
+        main.queue[value] = {}
+    end
+    main.queue[value].count = main.queue[value].count + stack.amt;
+    main.queue[value].slots = slots
+end
+
 function main.Enqueue()
     -- get the front side of the inventory
     local size = meinv.getInventorySize(main.conf.side)
 
     for i=1,size,1 do
-        if has_value(main.process_slots, i) == false then
+        if main.has_value(main.process_slots, i) == false then
             local stack = meinv.getStackInSlot(main.conf.side, i)
             if stack ~= nil and stack.name == "minecraft:paper" and stack.label ~= "Paper" then
                 local done = false;
                 for index, value in pairs(proxyNames) do
-                    if index == stack.label and has_element(main.conf.patternNames, index) then
+                    if index == stack.label and main.has_element(main.conf.patternNames, index) then
                         if main.queue[value] == nil then
                             main.queue[value] = {}
                         end
@@ -95,13 +103,13 @@ function main.Enqueue()
                     end
                 end
 
-                
-                if done == false and has_element(main.queue, label) and has_element(main.conf.patternNames, main.label) then
-                    if main.queue[value] == nil then
-                        main.queue[value] = {}
+                -- main.has_element(main.conf.patternNames, "item.thermalexpansion.frame.frameMachine")
+                if done == false and main.has_element(main.queue, stack.label) and main.has_value(main.conf.patternNames, stack.label) then
+                    if main.queue[stack.label] == nil then
+                        main.queue[stack.label] = {}
                     end
-                    main.queue[label].count = main.queue[label].count + stack.size;
-                    table.insert(main.queue[label].slots, i)
+                    main.queue[stack.label].count = main.queue[stack.label].count + stack.size;
+                    table.insert(main.queue[stack.label].slots, i)
                     table.insert(main.process_slots, i)
                 end
             elseif stack ~= nil then
@@ -109,6 +117,8 @@ function main.Enqueue()
             end
         end
     end
+    print("final:")
+    main.tprint(main.queue)
 end
 
 function main.Process()
@@ -150,6 +160,22 @@ function main.tablelength(T)
         count = count + 1 
     end
     return count
+end
+
+function main.tprint (tbl)
+    local indent = ""
+    if not indent then indent = 0 end
+    for k, v in pairs(tbl) do
+      formatting = string.rep("  ", indent) .. k .. ": "
+      if type(v) == "table" then
+        print(formatting)
+        tprint(v, indent+1)
+      elseif type(v) == 'boolean' then
+        print(formatting .. tostring(v))      
+      else
+        print(formatting .. v)
+      end
+    end
 end
 
 print("Test", main.conf.side)
