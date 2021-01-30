@@ -12,6 +12,7 @@ repnames.ic2pat = "ic2:pattern_storage";
 
 local main = {}
 
+
 main.isSafe = false;
 main.init = false;
 main.alive = true;
@@ -21,7 +22,7 @@ main.conf.scanPos = nil
 main.conf.patPos = nil
 main.conf.UUInv = nil
 main.conf.side = -1
-
+main.conf.patternNames = {}
 -- program.iostate: 0 listen,2 read,3 queue, 0 listen...
 
 main.process_slots = {}
@@ -29,6 +30,11 @@ main.queue = {}
 main.isCounting = false
 
 function main.Main()
+
+    for i,k in pairs(rep.getPatterns()) do 
+        table.insert(main.conf.patternNames, i)
+    end
+
     print("Test", main.conf.side)
     main.conf.side = program.tsave.load("side.cfg")
 
@@ -71,26 +77,34 @@ function main.Enqueue()
     -- get the front side of the inventory
     local size = meinv.getInventorySize(main.conf.side)
 
-    for i,k in size do
-        if has_value(main.process_slots, i-1) == false then
-            local stack = meinv.getStackInInternalSlot(i - 1)
-            if stack.name == "minecraft:paper" and stack.label ~= "Paper" then
+    for i=1,size,1 do
+        if has_value(main.process_slots, i) == false then
+            local stack = meinv.getStackInSlot(main.conf.side, i)
+            if stack ~= nil and stack.name == "minecraft:paper" and stack.label ~= "Paper" then
                 local done = false;
                 for index, value in pairs(proxyNames) do
-                    if index == stack.label then
+                    if index == stack.label and has_element(main.conf.patternNames, index) then
+                        if main.queue[value] == nil then
+                            main.queue[value] = {}
+                        end
                         main.queue[value].count = main.queue[value].count + stack.size;
-                        table.insert(main.queue[value].slots, i - 1)
-                        table.insert(main.process_slots, i - 1)
+                        table.insert(main.queue[value].slots, i)
+                        table.insert(main.process_slots, i)
                         done = true;
                         break;
                     end
                 end
-                if done == false and has_element(main.queue, label) then
+
+                
+                if done == false and has_element(main.queue, label) and has_element(main.conf.patternNames, main.label) then
+                    if main.queue[value] == nil then
+                        main.queue[value] = {}
+                    end
                     main.queue[label].count = main.queue[label].count + stack.size;
                     table.insert(main.queue[label].slots, i - 1)
                     table.insert(main.process_slots, i - 1)
                 end
-            else
+            elseif stack ~= nil then
                 print("Unknown item:", stack.label, " / ", stack.name)
             end
         end
@@ -111,7 +125,7 @@ function main.Process()
     end
 end
 
-local function has_value (tab, val)
+function main.has_value (tab, val)
     for index, value in ipairs(tab) do
         if value == val then
             return true
@@ -121,7 +135,7 @@ local function has_value (tab, val)
     return false
 end
 
-local function has_element (tab, val)
+function main.has_element (tab, val)
     for index, value in pairs(tab) do
         if index == val then
             return true
@@ -130,7 +144,7 @@ local function has_element (tab, val)
     return false
 end
 
-local function tablelength(T)
+function main.tablelength(T)
     local count = 0
     for _ in pairs(T) do 
         count = count + 1 
