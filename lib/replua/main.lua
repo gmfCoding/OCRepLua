@@ -30,7 +30,7 @@ main.isCounting = false
 
 function main.Main()
     print("Test", main.conf.side)
-    local main.conf.side = program.tsave.load("side.cfg")
+    main.conf.side = program.tsave.load("side.cfg")
 
     -- Foreach side check if there is a valid inventory
     if main.conf.side == -1 then
@@ -54,7 +54,7 @@ function main.Main()
         io.write("rep>")
         local ui = io.read();
         if ui == "setup" then main.Setup();
-        if ui == "proc" then main.Process();
+        elseif ui == "proc" then main.Process();
         elseif ui == "exec" then program.rep.Init()
         elseif ui == "quit" then main.alive = false
         end
@@ -76,7 +76,7 @@ function main.Enqueue()
             local stack = meinv.getStackInInternalSlot(i - 1)
             if stack.name == "minecraft:paper" and stack.label ~= "Paper" then
                 local done = false;
-                for index, value in pairs(proxyNames)
+                for index, value in pairs(proxyNames) do
                     if index == stack.label then
                         main.queue[value].count = main.queue[value].count + stack.size;
                         table.insert(main.queue[value].slots, i - 1)
@@ -98,7 +98,7 @@ function main.Enqueue()
 end
 
 function main.Process()
-    for i,k in pairs(queue)
+    for i,k in pairs(queue) do
         print(i .. ":".. tostring(queue.s))
         rep.setPatternNamed(k);
         local prev = 1
