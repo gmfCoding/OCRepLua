@@ -76,8 +76,10 @@ end
 function main.TestQueue(value, amt, slots)
     if main.queue[value] == nil then
         main.queue[value] = {}
+        main.queue[value].count = 0
+        main.queue[value].slots = {}
     end
-    main.queue[value].count = main.queue[value].count + stack.amt;
+    main.queue[value].count = main.queue[value].count + amt;
     main.queue[value].slots = slots
 end
 
@@ -91,26 +93,34 @@ function main.Enqueue()
             if stack ~= nil and stack.name == "minecraft:paper" and stack.label ~= "Paper" then
                 local done = false;
                 for index, value in pairs(proxyNames) do
-                    if index == stack.label and main.has_element(main.conf.patternNames, index) then
+                    if index == stack.label  main.conf.patternNames[value] ~= nil then
                         if main.queue[value] == nil then
                             main.queue[value] = {}
+                            main.queue[value].count = 0
+                            main.queue[value].slots = {}
                         end
+                        
                         main.queue[value].count = main.queue[value].count + stack.size;
                         table.insert(main.queue[value].slots, i)
                         table.insert(main.process_slots, i)
+                        print("Finished item:", stack.label)
                         done = true;
                         break;
                     end
                 end
 
                 -- main.has_element(main.conf.patternNames, "item.thermalexpansion.frame.frameMachine")
-                if done == false and main.has_element(main.queue, stack.label) and main.has_value(main.conf.patternNames, stack.label) then
+                if done == false and  main.conf.patternNames[stack.label] ~= nil then
+                    print("Queued item:", stack.label)
                     if main.queue[stack.label] == nil then
                         main.queue[stack.label] = {}
+                        main.queue[stack.label].count = 0
+                        main.queue[stack.label].slots = {}
                     end
                     main.queue[stack.label].count = main.queue[stack.label].count + stack.size;
                     table.insert(main.queue[stack.label].slots, i)
                     table.insert(main.process_slots, i)
+                    print("Finished item:", stack.label)
                 end
             elseif stack ~= nil then
                 print("Unknown item:", stack.label, " / ", stack.name)
@@ -122,13 +132,13 @@ function main.Enqueue()
 end
 
 function main.Process()
-    for i,k in pairs(queue) do
-        print(i .. ":".. tostring(queue.s))
+    for i,k in pairs(main.queue) do
+        print(i .. ":".. tostring(main.queue[i]))
         rep.setPatternNamed(k);
         local prev = 1
-        for i,k in queue[i].count, 1 do
+        for i,k in main.queue[i].count, 1 do
             prev = rep.setMode(1)
-            while rep.getMode() == prev do
+            while rep.getMode() ~= 0 do
                 local i = 0
             end
         end
