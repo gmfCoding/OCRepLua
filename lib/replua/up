@@ -1,8 +1,9 @@
 local shell = require("shell")
-shell.execute("cd RepApp");
+shell.execute("cd home")
+shell.execute("cd lib/replua");
 
-shell.execute("wget -f https://raw.githubusercontent.com/gmfCoding/OC_IC2Replicator/master/RepApp/main.lua?version=02382 main.lua");
-shell.execute("wget -f https://raw.githubusercontent.com/gmfCoding/OC_IC2Replicator/master/RepApp/program.lua?version=02382  program.lua");
-shell.execute("wget -f https://raw.githubusercontent.com/gmfCoding/OC_IC2Replicator/master/RepApp/replicator.lua?version=02382  replicator.lua");
-shell.execute("wget -f https://raw.githubusercontent.com/gmfCoding/OC_IC2Replicator/master/RepApp/tableToFile.lua?version=02382  tableToFile.lua");
-shell.execute("wget -f https://raw.githubusercontent.com/gmfCoding/OC_IC2Replicator/master/RepApp/up?version=02382  up");
+shell.execute("wget -f https://github.com/gmfCoding/OCRepLua/blob/main/lib/replua/main.lua?version=02382 main.lua");
+shell.execute("wget -f https://github.com/gmfCoding/OCRepLua/blob/main/lib/replua/program.lua?version=02382 program.lua");
+shell.execute("wget -f https://github.com/gmfCoding/OCRepLua/blob/main/lib/replua/tableToFile.lua?version=02382 tableToFile.lua");
+shell.execute("wget -f https://github.com/gmfCoding/OCRepLua/blob/main/lib/replua/up?version=02382 up");
+shell.execute("wget -f https://github.com/gmfCoding/OCRepLua/blob/main/lib/replua/proxy?version=02382 proxy");
