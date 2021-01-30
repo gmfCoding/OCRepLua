@@ -101,8 +101,8 @@ function main.Enqueue()
                         main.queue[value] = {}
                     end
                     main.queue[label].count = main.queue[label].count + stack.size;
-                    table.insert(main.queue[label].slots, i - 1)
-                    table.insert(main.process_slots, i - 1)
+                    table.insert(main.queue[label].slots, i)
+                    table.insert(main.process_slots, i)
                 end
             elseif stack ~= nil then
                 print("Unknown item:", stack.label, " / ", stack.name)
