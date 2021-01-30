@@ -1,7 +1,7 @@
 local world = program.rep_world
 local db = program.rep_db
 local meinv = program.me_inv;
-local rep = program.rep;
+local rep = program.te_rep;
 local repBlockNames = {}
 local repnames = {}
 local proxyNames = nil
@@ -31,7 +31,7 @@ main.isCounting = false
 
 function main.Main()
 
-    for i,k in pairs(rep.getPatterns()) do 
+    for i, k in pairs(rep.getPatterns()) do 
         table.insert(main.conf.patternNames, i)
     end
 
